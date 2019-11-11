@@ -1,0 +1,32 @@
+---
+  - name: Install Fail2Ban packages
+    package:
+      name: "{{ item }}"
+      state: present
+    loop:
+    - fail2ban-server
+    - fail2ban-firewalld
+
+  - name: Copy jail.conf before altering it
+    copy:
+      dest: /etc/fail2ban/jail.d/local.conf
+      src: /etc/fail2ban/jail.conf
+      remote_src: yes
+      force: no
+
+  - name: Configure Fail2Ban
+    ini_file:
+      path: /etc/fail2ban/jail.d/local.conf
+      section: "{{ item.section }}"
+      option: "{{ item.option }}"
+      value: "{{ item.value }}"
+    loop:
+    - { section: DEFAULT, option: bantime, value: 1w }
+    - { section: sshd,    option: enabled, value: "true" }
+
+  - name: Enable Fail2Ban Services
+    systemd:
+      daemon_reload: yes
+      name: fail2ban
+      enabled: yes
+      state: restarted
