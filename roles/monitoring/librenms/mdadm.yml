@@ -1,0 +1,27 @@
+---
+## Install LibreNMS MDADM (SoftRAID) SNMP Extend - https://docs.librenms.org/Extensions/Applications/#mdadm
+# wget https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/mdadm -O /etc/snmp/mdadm
+  - name: LibreNMS - MDADM SNMP Extend Script
+    block:
+    - name: Get LibreNMS - MDADM SNMP Extend Script
+      get_url:
+        url: https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/mdadm
+        dest: /etc/snmp/mdadm
+        mode: +x
+        force: yes
+
+    - name: Add LibreNMS - MDADM SNMP Extend Script to snmpd.conf
+      lineinfile:
+        path: /etc/snmp/snmpd.conf
+        regexp: '^extend mdadm'
+        line: extend mdadm /etc/snmp/mdadm
+    when: "'mdadm' in ansible_facts.packages and ansible_device_links.uuids.md0 is defined"
+
+#  - name: LibreNMS - MDADM SNMP Extend Script Cleanup snmpd.conf
+#    lineinfile:
+#      path: /etc/snmp/snmpd.conf
+#      regexp: '^extend mdadm'
+#      state: absent
+    ## TODO - Fix issue with CentOS not seeing the SoftRAID devices
+#    when: "'mdadm' in ansible_facts.packages and ansible_device_links.uuids.md0 is undefined"
+
