@@ -1,0 +1,8 @@
+---
+## Install LibreNMS NFS-Server SNMP Extend - https://docs.librenms.org/Extensions/Applications/#nfs-server
+# just add the following line to /etc/snmp/snmpd.conf, note : find out where cat is located using : which cat
+# extend nfs-server /bin/cat /proc/net/rpc/nfsd
+  - name: Install LibreNMS - NFS-Server SNMP Extend Script
+    debug:
+      msg: "Install NFS-Server SNMP Monitor"
+    when: "'nfs-server' in ansible_facts.packages"
