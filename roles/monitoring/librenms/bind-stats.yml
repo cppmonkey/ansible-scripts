@@ -1,0 +1,41 @@
+---
+## Install LibreNMS BIND SNMP Extend - https://docs.librenms.org/Extensions/Applications/#bind9-aka-named
+# wget https://github.com/librenms/librenms-agent/raw/master/snmp/bind -O /etc/snmp/bind
+  - name: LibreNMS - Bind SNMP Extend Script
+    block:
+    - name: Get LibreNMS - Bind SNMP Extend Script
+      get_url:
+        url: https://github.com/librenms/librenms-agent/raw/master/snmp/bind
+        dest: /etc/snmp/bind
+        mode: +x
+        force: yes
+
+    - name: Add LibreNMS - Create Bind stats file
+      file:
+        path: /var/run/named/stats
+        owner: "{{ bind_user }}"
+        group: "{{ bind_group }}"
+        state: touch
+
+    - name: Add LibreNMS - Create Bind stats file (Buster only)
+      file:
+        path: /var/cache/bind/named.stats
+        owner: "{{ bind_user }}"
+        group: "{{ bind_group }}"
+        state: touch
+      when: ansible_distribution == 'Debian' and ansible_distribution_release == 'buster'
+
+    - name: Add LibreNMS - Alter stats file location (Buster only)
+      lineinfile:
+        path: /etc/snmp/bind
+        regexp: '^my \$stats_file' # $ needed escaping
+        line: my $stats_file='/var/cache/bind/named.stats';
+        backrefs: yes
+      when: ansible_distribution == 'Debian' and ansible_distribution_release == 'buster'
+
+    - name: Add LibreNMS - Bind SNMP Extend script to snmpd.conf
+      lineinfile:
+        path: /etc/snmp/snmpd.conf
+        regexp: '^extend bind'
+        line: extend bind /etc/snmp/bind
+    when: "'bind9' in ansible_facts.packages"
