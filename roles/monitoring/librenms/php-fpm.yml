@@ -1,0 +1,23 @@
+---
+## Install LibreNMS PHP-FPM SNMP Extend - https://docs.librenms.org/Extensions/Applications/#php-fpm
+# sudo wget https://github.com/librenms/librenms-agent/raw/master/snmp/phpfpmsp -O /etc/snmp/phpfpmsp && sudo chmod +x /etc/snmp/phpfpmsp
+  - name: LibreNMS - PHP-FPM Server SNMP Extend Script
+    block:
+    - name: Get Required Packages - PHP-FPM SNMP Extend Script
+      package:
+        name: curl
+        state: present
+    - name: Get LibreNMS - PHP-FPM SNMP Extend Script
+      get_url:
+        url: https://github.com/librenms/librenms-agent/raw/master/snmp/phpfpmsp
+        dest: /etc/snmp/phpfpmsp
+        mode: +x
+        force: yes
+
+    - name: Add LibreNMS - PHP-FPM SNMP Extend Script to snmpd.conf
+      lineinfile:
+        path: /etc/snmp/snmpd.conf
+        regexp: '^extend phpfpmsp'
+        line: extend phpfpmsp /etc/snmp/phpfpmsp
+    when: "'php-fpm' in ansible_facts.packages or 'php7.0-fpm' in ansible_facts.packages or 'php7.3-fpm' in ansible_facts.packages"
+
