@@ -1,0 +1,19 @@
+---
+## Install LibreNMS NTP Server SNMP Extend - https://docs.librenms.org/Extensions/Applications/#ntp-server-aka-ntpd
+# wget https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/ntp-server.sh -O /etc/snmp/ntp-server.sh
+  - name: LibreNMS - NTP Server SNMP Extend Script
+    block:
+    - name: Get LibreNMS - NTP Server SNMP Extend Script
+      get_url:
+        url: https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/ntp-server.sh
+        dest: /etc/snmp/ntp-server.sh
+        mode: +x
+        force: yes
+
+    - name: Add LibreNMS - NTP Server SNMP Extend Script to snmpd.conf
+      lineinfile:
+        path: /etc/snmp/snmpd.conf
+        regexp: '^extend ntp-server'
+        line: extend ntp-server /etc/snmp/ntp-server.sh
+    when: "'ntp' in ansible_facts.packages"
+
