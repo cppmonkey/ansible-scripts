@@ -1,0 +1,7 @@
+---
+- name: apply development roll
+  hosts: localhost
+  become: true
+
+  roles:
+    - development
