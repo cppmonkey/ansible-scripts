@@ -1,0 +1,21 @@
+---
+  - name: Allow VPN IPv4
+    firewalld:
+      rich_rule: rule family=ipv4 protocol value=gre accept
+      permanent: yes
+      immediate: yes
+      state: enabled
+
+  - name: Allow VPN IPv6
+    firewalld:
+      rich_rule: rule family=ipv6 protocol value=gre accept
+      permanent: yes
+      immediate: yes
+      state: enabled
+
+  - name: Allow Mansquerade
+    firewalld:
+      masquerade: yes
+      permanent: yes
+      immediate: yes
+      state: enabled
