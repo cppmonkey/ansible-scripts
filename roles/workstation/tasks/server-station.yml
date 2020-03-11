@@ -1,16 +1,14 @@
 ---
-  - name: Install required Python packages for WattMan
-    package:
-      name: "{{ item }}"
-      state: present
-    with_items:
-      - python3-cairo
-      - python3-setuptools
-      - python3-matplotlib-gtk3
-
-  - name: Fix Radeon GPU Flicker
+  - name: Fix Radeon GPU0 Flicker
     cron:
       name: AMDGPU
       state: present
       special_time: reboot
-      job: "echo high > /sys/class/drm/card0/device/power_dpm_force_performance_level && echo high > /sys/class/drm/card1/device/power_dpm_force_performance_level"
+      job: "echo high > /sys/class/drm/card0/device/power_dpm_force_performance_level"
+
+  - name: Fix Radeon GPU1 Flicker
+    cron:
+      name: AMDGPU
+      state: present
+      special_time: reboot
+      job: "echo high > /sys/class/drm/card1/device/power_dpm_force_performance_level"
