@@ -14,7 +14,7 @@
     lineinfile:
       path: /etc/snmp/snmpd.conf
       regexp: '^com2sec'
-      line: "com2sec  readonly  {{snmp_ipnetwork}}  {{ snmp_community }}"
+      line: "com2sec  readonly  {{ snmp_ipnetwork }}  {{ snmp_community }}"
       backrefs: yes
 
   - name: Get LibreNMS - Update Contact Details
