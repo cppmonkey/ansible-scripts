@@ -7,4 +7,17 @@
       create: yes
     when: ansible_os_family == 'Debian'
 
+  - name: Get LibreNMS - OS Update SNMP Extend Script
+    get_url:
+      url: https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/osupdate
+      dest: /etc/snmp/osupdate
+      mode: +x
+      force: yes
+
+  - name: Add LibreNMS - Bind SNMP Extend script to snmpd.conf
+    lineinfile:
+      path: /etc/snmp/snmpd.conf
+      regexp: '^extend osupdate'
+      line: extend osupdate /etc/snmp/osupdate
+
 ## TODO RHEL based OS - Will need SELinux settings
