@@ -1,2 +1,3 @@
 ---
 - import_tasks: install-fail2ban.yml
+- import_tasks: setup-sysctl.yml
