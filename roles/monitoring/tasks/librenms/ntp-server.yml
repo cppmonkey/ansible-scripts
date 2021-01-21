@@ -15,5 +15,6 @@
         path: /etc/snmp/snmpd.conf
         regexp: '^extend ntp-server'
         line: extend ntp-server /etc/snmp/ntp-server.sh
-    when: "'ntp' in ansible_facts.packages"
+      notify: restart snmpd
+    when: packages['ntp'] is defined
 

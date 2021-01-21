@@ -19,5 +19,6 @@
       path: /etc/snmp/snmpd.conf
       regexp: '^extend osupdate'
       line: extend osupdate /etc/snmp/osupdate
+    notify: restart snmpd
 
 ## TODO RHEL based OS - Will need SELinux settings

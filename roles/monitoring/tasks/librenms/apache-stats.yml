@@ -32,4 +32,5 @@
         path: /etc/snmp/snmpd.conf
         regexp: '^extend apache'
         line: extend apache /etc/snmp/apache-stats.py
-    when: "'apache2' in ansible_facts.packages"
+      notify: restart snmpd
+    when: packages['apache2'] is defined

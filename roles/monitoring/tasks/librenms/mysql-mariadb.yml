@@ -26,6 +26,5 @@
         path: /etc/snmp/snmpd.conf
         regexp: '^extend mysql'
         line: extend mysql /etc/snmp/mysql
-    when: "'mysql-server' in ansible_facts.packages or 'mariadb-server' in ansible_facts.packages"
-
-
+      notify: restart snmpd
+    when: packages['mysql-server'] is defined or packages['mariadb-server'] is defined

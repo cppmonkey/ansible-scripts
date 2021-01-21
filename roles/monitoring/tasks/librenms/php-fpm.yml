@@ -19,5 +19,6 @@
         path: /etc/snmp/snmpd.conf
         regexp: '^extend phpfpmsp'
         line: extend phpfpmsp /etc/snmp/phpfpmsp
-    when: "'php-fpm' in ansible_facts.packages or 'php7.0-fpm' in ansible_facts.packages or 'php7.3-fpm' in ansible_facts.packages"
+      notify: restart snmpd
+    when: packages['php-fpm'] is defined or packages['php7.0-fpm'] is defined or packages['php7.3-fpm'] is defined
 

@@ -38,4 +38,5 @@
         path: /etc/snmp/snmpd.conf
         regexp: '^extend bind'
         line: extend bind /etc/snmp/bind
-    when: "'bind9' in ansible_facts.packages"
+      notify: restart snmpd
+    when: packages['bind9'] is defined

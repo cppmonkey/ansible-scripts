@@ -15,7 +15,10 @@
         path: /etc/snmp/snmpd.conf
         regexp: '^extend mdadm'
         line: extend mdadm /etc/snmp/mdadm
-    when: "'mdadm' in ansible_facts.packages and ansible_device_links.uuids.md0 is defined"
+      notify: restart snmpd
+    when:
+    - ansible_device_links.uuids.md0 is defined
+    - packages['mdadm'] is defined
 
 #  - name: LibreNMS - MDADM SNMP Extend Script Cleanup snmpd.conf
 #    lineinfile:
