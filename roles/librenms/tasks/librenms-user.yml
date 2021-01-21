@@ -1,0 +1,9 @@
+---
+  - name: Deploy LibreNMS user
+    user:
+      # useradd librenms -d /opt/librenms -M -r -s /usr/bin/bash
+      name: librenms
+      home: /opt/librenms
+      create_home: no
+      system: yes
+      shell: /usr/bin/bash

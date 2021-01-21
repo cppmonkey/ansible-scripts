@@ -1,0 +1,19 @@
+---
+  - name: Allow http through firewalld
+    firewalld:
+      service: http
+      permanent: yes
+      state: enabled
+
+  - name: Allow http through firewalld
+    firewalld:
+      service: http
+      permanent: yes
+      state: enabled
+
+  - name: Allow http through firewalld
+    firewalld:
+      zone: public
+      service: http
+      permanent: yes
+      state: enabled

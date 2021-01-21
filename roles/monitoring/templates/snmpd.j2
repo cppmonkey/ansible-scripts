@@ -1,0 +1,17 @@
+com2sec readonly  {{ snmp_network }}  {{ snmp_community }}
+
+group MyROGroup v2c        readonly
+view all    included  .1                               80
+access MyROGroup ""      any       noauth    exact  all    none   none
+
+syslocation {{ snmp_location }} [{{ snmp_gps }}]
+syscontact {{ snmp_contact }} <{{ snmp_email }}>
+
+#Distro Detection
+extend distro /usr/bin/distro
+#OSUpdate Detection
+extend osupdate /etc/snmp/osupdate
+#Hardware Detection (uncomment to enable)
+#extend hardware '/bin/cat /sys/devices/virtual/dmi/id/product_name'
+#extend manufacturer '/bin/cat /sys/devices/virtual/dmi/id/sys_vendor'
+#extend serial '/bin/cat /sys/devices/virtual/dmi/id/product_serial'

@@ -1,0 +1,58 @@
+---
+- hosts: web0.b4hq.vm.srv.b4rn.org.uk
+  become: yes
+
+  handlers:
+  - name: reload nginx service
+    ansible.builtin.service:
+      name: nginx
+      state: reloaded
+
+  tasks:
+  - name: Create Nginx allow list
+    ansible.builtin.template:
+      src: allow_hosts.j2
+      dest: /etc/nginx/snippets/allow_list.conf
+    vars:
+      ip_blocks:
+        - name: localhost
+          address: 127.0.0.1
+        - name: B4RN/Our Office Engineering
+          address: 5.83.8.64/28
+        - name: Tom Riggs home IPv4 address
+          address: 217.114.49.206
+#        - name: TNP Management IPv4 address
+#          ddress: 217.114.58.160/28
+        - name: B4RN/Our IPv6 block
+          address: 2a01:6240::/29
+        - name: David Fitton home IPv6 prefix
+          address: 2a02:c7f:341a:f200::/56
+        - name: Tom Brook home IPv6 prefix
+          address: 2001:8b0:ba49:740c::/64
+        - name: Matthew Mercer HE Tunnel IPv6 prefix /64
+          address: 2001:470:1f09:4db::/64
+        - name: Matthew Mercer HE Tunnel IPv6 prefix /48
+          address: 2001:470:6bb5::/48
+    notify: reload nginx service
+
+  - name: Create Nginx developer allow list
+    ansible.builtin.template:
+      src: allow_hosts.j2
+      dest: /etc/nginx/snippets/developer_allow_list.conf
+    vars:
+      ip_blocks:
+        - name: localhost
+          address: 127.0.0.1
+        - name: B4RN/Our Office Engineering
+          address: 5.83.8.64/28
+        - name: Tom Riggs home IPv4 address
+          address: 217.114.49.206
+        - name: Andrew Walker - CRM Development
+          address: 31.132.32.182
+        - name: Piotr Bajer at Xfive
+          address: 176.9.228.232
+        - name: Piotr Bajer at Xfive - Secondary
+          address: 193.70.64.153
+        - name: B4RN/Our IPv6 block
+          address: 2a01:6240::/29
+    notify: reload nginx service

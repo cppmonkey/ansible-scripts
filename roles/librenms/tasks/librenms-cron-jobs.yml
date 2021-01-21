@@ -1,0 +1,12 @@
+---
+  - name: Create LibreNMS CRON Job
+    copy:
+      src: /opt/librenms/librenms.nonroot.cron
+      dest: /etc/cron.d/librenms
+      remote_src: yes
+  
+  - name: Create LibreNMS Logrotate CRON job
+    copy:
+      src: /opt/librenms/misc/librenms.logrotate
+      dest: /etc/logrotate.d/librenms
+      remote_src: yes

@@ -1,0 +1,9 @@
+---
+  - name: install required snmp packages
+    package:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - net-snmp
+      - net-snmp-utils
+

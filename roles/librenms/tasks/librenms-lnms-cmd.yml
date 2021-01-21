@@ -1,0 +1,12 @@
+---
+  - name: Create link to lnms command
+    file:
+      src: /opt/librenms/lnms
+      dest: /usr/local/bin/lnms
+      state: link
+
+  - name: Copy lnms auto completion script
+    copy:
+      src: /opt/librenms/misc/lnms-completion.bash
+      dest: /etc/bash_completion.d/
+      remote_src: yes

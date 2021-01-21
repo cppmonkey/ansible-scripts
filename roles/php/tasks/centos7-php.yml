@@ -1,0 +1,33 @@
+---
+
+## Install php Reports for CentOS 7
+
+  - name: Install remote repo - remi-php
+    ansible.builtin.package::
+      name: http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+      state: present
+
+  - name: Enable Remi-PHP Repo
+    community.general.yum_repository:
+      name: remi-php73
+      enabled: yes
+
+  - name: Install PHP Packages
+    ansible.builtin.package:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+      - php-fpm
+      - php-cli
+      - php-common
+      - php-curl
+      - php-gd
+      - php-mbstring
+      - php-process
+      - php-snmp
+      - php-xml
+      - php-zip
+      - php-memcached
+      - php-mysqlnd
+      - python-memcached
+    notify: restart php-fpm

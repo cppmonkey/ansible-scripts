@@ -1,0 +1,9 @@
+---
+  - name: Define LibreNMS within Nginx
+    template:
+      dest: /etc/nginx/conf.d/librenms.conf
+      src: librenms.conf.j2
+      setype: httpd_config_t
+    vars:
+      port: 80
+      server_name: "{{ ansible_host }}"
