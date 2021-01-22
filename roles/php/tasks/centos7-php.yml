@@ -10,6 +10,10 @@
   - name: Enable Remi-PHP Repo
     ansible.builtin.yum_repository:
       name: remi-php73
+      description: Remi's PHP 7.3 RPM repository for Enterprise Linux $releasever - $basearch
+      mirrorlist: http://cdn.remirepo.net/enterprise/$releasever/php73/mirror
+      gpgkey: file:///etc/pki/rpm-gpg/RPM-GPG-KEY-remi
+      gpgcheck: yes
       enabled: yes
 
   - name: Install PHP Packages
