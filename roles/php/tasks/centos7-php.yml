@@ -8,7 +8,7 @@
       state: present
 
   - name: Enable Remi-PHP Repo
-    community.general.yum_repository:
+    ansible.builtin.yum_repository:
       name: remi-php73
       enabled: yes
 
