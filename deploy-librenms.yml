@@ -1,0 +1,19 @@
+---
+- import_playbook: group-servers.yml
+
+- name: apply rolls for LibreNMS Servers
+  hosts: librenms
+  become: true
+
+## Commented out, as only used for initial installation.
+#  gather_facts: no
+#  pre_tasks:
+#  - name: install python
+#    raw: apt install python3 sudo -y
+
+  roles:
+    - server
+    - nginx
+    - php
+    - librenms
+    - monitoring

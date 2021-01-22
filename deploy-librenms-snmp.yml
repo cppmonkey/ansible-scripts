@@ -1,0 +1,9 @@
+---
+- import_playbook: group-servers.yml
+
+- name: Deploy monitoring, depending on what is installed
+  hosts: servers
+  become: true
+
+  roles:
+    - monitoring
