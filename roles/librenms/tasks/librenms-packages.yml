@@ -29,8 +29,6 @@
     - php-mysqlnd
     - python3
     - python3-PyMySQL
-    - python3-redis
-    - python3-memcached
     - python3-pip
     - rrdtool
     - unzip
