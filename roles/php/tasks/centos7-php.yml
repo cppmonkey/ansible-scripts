@@ -3,7 +3,7 @@
 ## Install php Reports for CentOS 7
 
   - name: Install remote repo - remi-php
-    ansible.builtin.package::
+    ansible.builtin.package:
       name: http://rpms.remirepo.net/enterprise/remi-release-7.rpm
       state: present
 
