@@ -1,7 +1,11 @@
 ---
   - name: Install packaged for pip
     ansible.builtin.package:
-      name: python3-pip, virtualenv, setuptools
+      name: "{{ item }}"
+    loop:
+      - python3-pip
+      - python3-virtualenv
+      - setuptools
 
   - name: Install PIP Packages
     ansible.builtin.pip:
