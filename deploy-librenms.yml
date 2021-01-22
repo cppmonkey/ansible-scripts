@@ -23,3 +23,4 @@
         snmp_network: 127.0.0.1
         snmp_community: public
         snmp_location: On the Moon!
+        snmp_gps: 0,0
