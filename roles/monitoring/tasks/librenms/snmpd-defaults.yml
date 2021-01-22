@@ -1,39 +1,23 @@
 ---
+  - name: Install SNMPD
+    package:
+      name: "{{ snmp_package }}"
+
   - name: Get LibreNMS - SNMP Extend Script
     shell: cat /etc/snmp/snmpd.conf
     register: snmpd_conf
 
   - name: Get LibreNMS - snmpd script
-    get_url:
-      url: https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/snmpd.conf.example
+    template:
+      src: snmpd.j2
       dest: /etc/snmp/snmpd.conf
       force: yes
     when: snmpd_conf.stdout.find('An example configuration') != -1
     notify: restart snmpd
 
-  - name: Get LibreNMS - Update Community
-    lineinfile:
-      path: /etc/snmp/snmpd.conf
-      regexp: '^com2sec'
-      line: "com2sec  readonly  {{ snmp_ipnetwork }}  {{ snmp_community }}"
-      backrefs: yes
-
-  - name: Get LibreNMS - Update Contact Details
-    lineinfile:
-      path: /etc/snmp/snmpd.conf
-      regexp: '^syscontact'
-      line: "syscontact {{ snmp_syscontact }}"
-      backrefs: yes
-
   - name: Get LibreNMS - distro SNMP Extend Script
     get_url:
       url: https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/distro
       dest: /usr/bin/distro
-      mode: +x
-      force: yes
-  - name: Get LibreNMS - OS Update SNMP Extend Script
-    get_url:
-      url: https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/osupdate
-      dest: /etc/snmp/osupdate
       mode: +x
       force: yes
