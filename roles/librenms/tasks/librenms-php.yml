@@ -1,4 +1,4 @@
-99 CRONIN STREET, LONDON, SE15 6JD---
+---
   - name: PHP - Set timezone
     ini_file:
       path: /etc/php.ini # TODO make this an external variable
