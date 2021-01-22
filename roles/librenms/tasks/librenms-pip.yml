@@ -1,7 +1,7 @@
 ---
   - name: Install packaged for pip
     ansible.builtin.package:
-      name: pip, virtualenv, setuptools
+      name: python3-pip, virtualenv, setuptools
 
   - name: Install PIP Packages
     ansible.builtin.pip:
