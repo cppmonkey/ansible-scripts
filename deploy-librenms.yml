@@ -2,7 +2,7 @@
 - import_playbook: group-servers.yml
 
 - name: apply rolls for LibreNMS Servers
-  hosts: librenms
+  hosts: all
   become: true
   ignore_errors: yes
 
@@ -13,8 +13,11 @@
 #    raw: apt install python3 sudo -y
 
   roles:
-    - server
+    #- server
     - nginx
     - php
     - librenms
-    - monitoring
+    - role: monitoring
+      vars:
+        snmp_package: net-snmp net-snmp-utils
+        snmp_network: 127.0.0.1

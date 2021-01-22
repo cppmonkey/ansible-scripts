@@ -1,7 +1,7 @@
 ---
 - name: Install Required Packages
   ansible.builtin.package:
-    name: "{{ item.name }}"
+    name: "{{ item }}"
     state: present
   with_items:
     - bash-completion
@@ -34,4 +34,3 @@
     - python3-pip
     - rrdtool
     - unzip
-    - fping
