@@ -19,5 +19,6 @@
     - librenms
     - role: monitoring
       vars:
-        snmp_package: net-snmp net-snmp-utils
+        snmp_package: net-snmp, net-snmp-utils
         snmp_network: 127.0.0.1
+        snmp_community: public
