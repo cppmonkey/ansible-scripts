@@ -4,6 +4,7 @@
 - name: apply rolls for LibreNMS Servers
   hosts: librenms
   become: true
+  ignore_errors: yes
 
 ## Commented out, as only used for initial installation.
 #  gather_facts: no
