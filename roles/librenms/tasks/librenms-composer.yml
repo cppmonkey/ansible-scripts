@@ -3,4 +3,4 @@
   ansible.builtin.shell:
     chdir: /opt/librenms/
     cmd: ./scripts/composer_wrapper.php install --no-dev
-  become:  librenms
+  become_user: librenms
