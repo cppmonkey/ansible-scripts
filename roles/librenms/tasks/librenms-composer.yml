@@ -1,0 +1,6 @@
+---
+- name: install composer
+  ansible.builtin.shell:
+    chdir: /opt/librenms/
+    cmd: ./scripts/composer_wrapper.php install --no-dev
+  become:  librenms
