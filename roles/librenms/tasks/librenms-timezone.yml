@@ -1,4 +1,4 @@
 ---
 - name: Set system timezone
   community.general.timezone:
-    name: Europe/London
+    name: "{{ librenms_timezone }}"

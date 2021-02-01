@@ -4,7 +4,7 @@
       path: /etc/php.ini # TODO make this an external variable
       section: Date
       option: date.timezone
-      value: Europe/London
+      value: "{{ librenms_timezone }}"
       create: no
 
   - name: Create LibreNMS php-fpm config
