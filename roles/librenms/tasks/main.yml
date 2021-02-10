@@ -2,6 +2,7 @@
 - import_tasks: librenms-packages.yml
 - import_tasks: librenms-user.yml
 - import_tasks: librenms-dir.yml
+- import_tasks: librenms-composer.yml
 - import_tasks: librenms-pip.yml
 - import_tasks: librenms-php.yml
 - import_tasks: librenms-snmp.yml
@@ -9,4 +10,3 @@
 - import_tasks: librenms-selinux.yml
 - import_tasks: librenms-lnms-cmd.yml
 - import_tasks: librenms-cron-jobs.yml
-- import_tasks: librenms-composer.yml
