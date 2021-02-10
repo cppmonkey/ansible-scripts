@@ -1,17 +1,17 @@
 ---
   - name: Install packaged for pip
     ansible.builtin.package:
-      name: "{{ item }}"
-    loop:
-      - python3-pip
-      - python3-virtualenv
-      - python3-setuptools
+      name:
+        - python3-pip
+        - python3-virtualenv
+        - python3-setuptools
+      state: present
 
   - name: Install PIP Packages
     ansible.builtin.pip:
       name:
       - redis
-      - memcached
+      - python3-memcached
       - mccabe<0.7,>=0.6
       - six~=1.12
       - toml>=0.7.1
