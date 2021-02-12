@@ -52,8 +52,8 @@
         memory: "{{ vm_memory | default(omit) }}"
         balloon: 1024
         nameservers: "{{ vm_nameserver | default(omit) }}"
-        ide:
-          ide0: 'local:cloudinit,format=qcow2'
+        #ide:
+        #  ide0: 'local:cloudinit,format=qcow2'
         citype: "{{ vm_citype | default(omit) }}"
         ipconfig:
           ipconfig0: "ip={{ item.vm_ipv4 }},gw={{ vm_gw }}"
@@ -169,6 +169,194 @@
         name: mariadb
         enabled: yes
         state: restarted
+      become: yes
+
+
+- name: Setup master on node1
+  hosts: zabbix1.lan.internal
+
+  become: yes
+
+  tasks:
+#    - name: generate password
+#      ansible.builtin.set_fact:
+#        mysql_replicator_password: "{{ lookup('password', '/tmp/passwordfile chars=ascii_letters,digits,punctuation') }}"
+
+    #SHOW MASTER STATUS\G
+    - name: Get master binlog file name and binlog position
+      community.mysql.mysql_replication:
+        mode: getmaster
+      register: zabbix1_master
+
+    - name: save variables
+      ansible.builtin.copy:
+        content: "{{ zabbix1_master|to_json }}"
+        dest: mysql.json
+      delegate_to: localhost
+      become: no
+
+    - name: debug
+      ansible.builtin.debug:
+        msg: "{{ zabbix1_master }}"
+
+    #GRANT REPLICATION SLAVE ON *.* TO 'replicator'@'10.0.0.32' identified by '{{ mysql_replication_password }}';
+    - name: Grant replication to replicator
+      community.mysql.mysql_user:
+        name: replicator
+        host: 10.0.0.32
+        password: "{{ lookup('env', 'MYSQL_REPLICATION_PASSWORD') }}"
+        priv: '*.*:REPLICATION SLAVE'
+        update_password: on_create
+
+
+- name: Setup slave/master on node2
+  hosts: zabbix2.lan.internal
+
+  become: yes
+
+  vars:
+    zabbix1_master: "{{ lookup('file', 'mysql.json') | from_json }}"
+
+  tasks:
+    # STOP SLAVE;
+    - name: Stop mysql slave thread
+      community.mysql.mysql_replication:
+        mode: stopslave
+
+    # CHANGE MASTER TO MASTER_HOST = '10.0.0.31',
+    #   MASTER_USER = 'replicator',
+    #   MASTER_PASSWORD = '{{ mysql_replication_password }}',
+    #   MASTER_LOG_FILE = 'log-bin.000004',
+    #   MASTER_LOG_POS = 415;
+    - name: Change master
+      community.mysql.mysql_replication:
+        mode: changemaster
+        master_host: 10.0.0.31
+        master_log_file: "{{ zabbix1_master.File }}" #mysql-bin.000009
+        master_log_pos: "{{ zabbix1_master.Position }}" #4578
+
+    # GRANT REPLICATION SLAVE ON *.* TO 'replicator'@'10.0.0.33' identified by '{{ mysql_replication_password }}';
+    - name: Grant replication to replicator
+      community.mysql.mysql_user:
+        name: replicator
+        host: 10.0.0.33
+        password: "{{ lookup('env', 'MYSQL_REPLICATION_PASSWORD') }}"
+        priv: '*.*:REPLICATION SLAVE'
+        update_password: on_create
+
+    # RESET MASTER
+    - name: reset mysql master thread
+      community.mysql.mysql_replication:
+        mode: resetmaster
+
+    # START SLAVE;
+    - name: Start mysql slave thread
+      community.mysql.mysql_replication:
+        mode: startslave
+
+    # SHOW SLAVE STATUS\G
+    - name: Get slave status
+      community.mysql.mysql_replication:
+        mode: getslave
+
+
+- name: Setup slave/master on node3
+  hosts: zabbix3.lan.internal
+
+  become: yes
+
+  vars:
+    zabbix1_master: "{{ lookup('file', 'mysql.json') | from_json }}"
+
+  tasks:
+    # STOP SLAVE;
+    - name: Stop mysql slave thread
+      community.mysql.mysql_replication:
+        mode: stopslave
+
+    # CHANGE MASTER TO MASTER_HOST = '10.0.0.32',
+    #   MASTER_USER = 'replicator',
+    #   MASTER_PASSWORD = '{{ mysql_replication_password }}',
+    #   MASTER_LOG_FILE = 'log-bin.000001',
+    #   MASTER_LOG_POS = 245;
+    - name: Change master
+      community.mysql.mysql_replication:
+        mode: changemaster
+        master_host: 10.0.0.32
+        master_log_file: "{{ zabbix1_master.File }}" #mysql-bin.000009
+        master_log_pos: "{{ zabbix1_master.Position }}" #4578
+
+    # GRANT REPLICATION SLAVE ON *.* TO 'replicator'@'10.0.0.31' identified by '{{ mysql_replication_password }}';
+    - name: Grant replication to replicator
+      community.mysql.mysql_user:
+        name: replicator
+        host: 10.0.0.31
+        password: "{{ lookup('env', 'MYSQL_REPLICATION_PASSWORD') }}"
+        priv: '*.*:REPLICATION SLAVE'
+        update_password: on_create
+
+    # RESET MASTER;
+    - name: reset mysql master thread
+      community.mysql.mysql_replication:
+        mode: resetmaster
+
+    # START SLAVE;
+    - name: start mysql slave thread
+      community.mysql.mysql_replication:
+        mode: startslave
+
+    # SHOW SLAVE STATUS\G
+    - name: Get slave status
+      community.mysql.mysql_replication:
+        mode: getslave
+
+    # SHOW MASTER STATUS\G
+    - name: Get master status
+      community.mysql.mysql_replication:
+        mode: getmaster
+
+
+- name: Setup slave on node1
+  hosts: zabbix1.lan.internal
+
+  become: yes
+
+  vars:
+    zabbix1_master: "{{ lookup('file', 'mysql.json') | from_json }}"
+
+  tasks:
+    # STOP SLAVE;
+    - name: Stop mysql slave thread
+      community.mysql.mysql_replication:
+        mode: stopslave
+
+    # CHANGE MASTER TO MASTER_HOST ='10.0.0.33',
+    #   MASTER_USER = 'replicator',
+    #   MASTER_PASSWORD = '{{ mysql_replication_password }}',
+    #   MASTER_LOG_FILE='log-bin.000001',
+    #   MASTER_LOG_POS =245;
+    - name: Change master
+      community.mysql.mysql_replication:
+        mode: changemaster
+        master_host: 10.0.0.33
+        master_log_file: "{{ zabbix1_master.File }}" #mysql-bin.000009
+        master_log_pos: "{{ zabbix1_master.Position }}" #4578
+
+    # START SLAVE;
+    - name: start mysql slave thread
+      community.mysql.mysql_replication:
+        mode: startslave
+
+    # SHOW SLAVE STATUS\G
+    - name: Get slave status
+      community.mysql.mysql_replication:
+        mode: getslave
+
+    # SHOW MASTER STATUS\G
+    - name: Get master status
+      community.mysql.mysql_replication:
+        mode: getmaster
+
 
 - name: Setup HA on VMs
   hosts: zabbix_ha_db
