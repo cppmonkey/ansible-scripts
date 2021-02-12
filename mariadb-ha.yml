@@ -1,0 +1,159 @@
+---
+- name: Deploy the VMs the Proxmox
+  hosts: localhost
+
+  vars:
+    - vms:
+        - vm_id: 301
+          vm_hostname: zabbix1
+          vm_ipv4: 10.0.0.31/23
+        - vm_id: 302
+          vm_hostname: zabbix2
+          vm_ipv4: 10.0.0.32/23
+        - vm_id: 303
+          vm_hostname: zabbix3
+          vm_ipv4: 10.0.0.33/23
+    - vm_nameserver: 10.0.0.5
+    - vm_cores: 2
+    - vm_memory: 2048
+    - vh_user: "root@pam"
+    - vh_host: 10.0.1.65
+    - vh_node: r7p4750
+    - vm_citype: nocloud
+    - vm_gw: 10.0.0.10
+    - vm_storage: storage
+    - vm_bridge: vmbr0
+    - vm_clone: cent-os7
+
+  tasks:
+    - name: create VMs
+      community.general.proxmox_kvm:
+        newid: "{{ item.vm_id }}"
+        node: "{{ vh_node }}"
+        api_user: "{{ vh_user }}"
+        #api_password: "{{ lookup('env', 'PROXMOX_PASSWORD') }}" # This is the default action
+        api_host: "{{ vh_host }}"
+        name: "{{ item.vm_hostname }}"
+        storage: "{{ vm_storage | default(omit) }}"
+        clone: "{{ vm_clone | default(omit) }}"
+        proxmox_default_behavior: no_defaults
+        timeout: 600
+      loop: "{{ vms }}"
+
+    - name: Update the VMs
+      community.general.proxmox_kvm:
+        vmid: "{{ item.vm_id }}"
+        node: "{{ vh_node }}"
+        api_user: "{{ vh_user }}"
+        api_host: "{{ vh_host }}"
+        name: "{{ item.vm_hostname }}"
+        cores: "{{ item.vm_cores | default(omit) }}"
+        vcpus: "{{ item.vm_vcpus | default(omit) }}"
+        memory: "{{ vm_memory | default(omit) }}"
+        balloon: 1024
+        nameservers: "{{ vm_nameserver | default(omit) }}"
+        ide:
+          ide0: 'local:cloudinit,format=qcow2'
+        citype: "{{ vm_citype | default(omit) }}"
+        ipconfig:
+          ipconfig0: "ip={{ item.vm_ipv4 }},gw={{ vm_gw }}"
+        sshkeys: "{{ vm_pubkey | default(omit) }}"
+        proxmox_default_behavior: no_defaults
+        update: yes
+      loop: "{{ vms }}"
+
+
+- name: Install MariaDB
+  hosts: zabbix_ha_db
+
+  tasks:
+    - name: Install MariaDB
+      ansible.builtin.package:
+        name: mariadb-server
+      become: yes
+
+    - name: Setup MariaDB config file
+      community.general.ini_file:
+        path: /etc/my.cnf.d/zabbixdb.cnf
+        section: mysqld
+        option: "{{ item.option }}"
+        value: "{{ item.value }}"
+      loop:
+        - option: default-storage-engine
+          value: InnoDB
+        - option: innodb
+          value: FORCE
+        - option: innodb_file_per_table
+          value: 1
+        - option: innodb_buffer_pool_size
+          value: 512M           # 50-75% of total RAM
+        - option: innodb_buffer_pool_instances
+          value: 8            # For MySQL 5.5 - 4, for 5.6+ - 8
+        - option: innodb_flush_log_at_trx_commit
+          value: 2
+        - option: innodb_flush_method
+          value: O_DIRECT
+        - option: innodb_io_capacity
+          value: 800           # HDD disks 500-800,    SSD disks - 2000
+        - option: sync-binlog
+          value: 0
+        - option: query-cache-size
+          value: 0
+        - option: server_id
+          value: "{{ '10.0.0.34'.split('.')[3] }}"            # for id settings IPs last number used
+        - option: report_host
+          value: "{{ inventory_hostname }}"
+        - option: log-slave-updates
+          value: true
+        - option: log_bin
+          value: /var/lib/mysql/log-bin
+        - option: log_bin_index
+          value: /var/lib/mysql/log-bin.index
+        - option: relay_log
+          value: /var/lib/mysql/relay-bin
+        - option: relay_log_index
+          value: /var/lib/mysql/relay-bin.index
+        - option: binlog_format
+          value: mixed
+        - option: binlog_cache_size
+          value: 64M
+        - option: max_binlog_size
+          value: 1G
+        - option: expire_logs_days
+          value: 5
+        - option: binlog_checksum
+          value: crc32
+        - option: max_allowed_packet
+          value: 500M
+      become: yes
+      notify: restart mariadb
+
+  handlers:
+    - name: restart mariadb
+      ansible.builtin.service:
+        name: mariadb
+        enabled: yes
+        state: restarted
+
+- name: Setup HA on VMs
+  hosts: zabbix_ha_db
+
+  tasks:
+    - name: Install HA
+      ansible.builtin.package:
+        name: "@ha"
+      become: yes
+
+    - name: generate random password
+      ansible.builtin.set_fact:
+        hacluster_password: "{{ lookup('password', '/tmp/passwordfile chars=ascii_letters,digits,punctuation') }}"
+
+    - name: set hacluster password
+      ansible.builtin.user:
+        name: hacluster
+        password: "{{ hacluster_password | password_hash('sha512') }}"
+      become: yes
+
+    - name: display password
+      ansible.builtin.debug:
+        msg: "{{ hacluster_password }}"
