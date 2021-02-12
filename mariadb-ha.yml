@@ -67,6 +67,16 @@
   hosts: zabbix_ha_db
 
   tasks:
+    - name: Gather package info
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Rename host
+      ansible.builtin.hostname:
+        name: "{{ inventory_hostname }}"
+        use: systemd
+      become: yes
+
     - name: Install MariaDB
       ansible.builtin.package:
         name: mariadb-server
@@ -100,7 +110,7 @@
         - option: query-cache-size
           value: 0
         - option: server_id
-          value: "{{ '10.0.0.34'.split('.')[3] }}"            # for id settings IPs last number used
+          value: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'].split('.')[3] }}"
         - option: report_host
           value: "{{ inventory_hostname }}"
         - option: log-slave-updates
@@ -127,6 +137,31 @@
           value: 500M
       become: yes
       notify: restart mariadb
+
+    - name: Ensure MariaDB is started
+      ansible.builtin.service:
+        name: mariadb
+        enabled: yes
+        state: started
+      become: yes
+
+    - name: install required packages for mariadb
+      ansible.builtin.package:
+        name: MySQL-python
+      become: yes
+
+    - name: remove annon MariaDB user
+      community.mysql.mysql_user:
+        name: ''
+        host_all: yes
+        state: absent
+      become: yes
+
+    - name: remove test database
+      community.mysql.mysql_user:
+        name: test
+        state: absent
+      become: yes
 
   handlers:
     - name: restart mariadb
