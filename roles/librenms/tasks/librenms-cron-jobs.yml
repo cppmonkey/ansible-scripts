@@ -3,10 +3,16 @@
     copy:
       src: /opt/librenms/librenms.nonroot.cron
       dest: /etc/cron.d/librenms
+      owner: root
+      group: root
+      mode: '0644'
       remote_src: yes
-  
+
   - name: Create LibreNMS Logrotate CRON job
     copy:
       src: /opt/librenms/misc/librenms.logrotate
       dest: /etc/logrotate.d/librenms
+      owner: root
+      group: root
+      mode: '0644'
       remote_src: yes

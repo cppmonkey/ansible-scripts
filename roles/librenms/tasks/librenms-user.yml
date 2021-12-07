@@ -4,6 +4,8 @@
       # useradd librenms -d /opt/librenms -M -r -s /usr/bin/bash
       name: librenms
       home: /opt/librenms
+      append: yes
+      groups: nginx # CentOS 7 only?
       create_home: no
       system: yes
       shell: /usr/bin/bash

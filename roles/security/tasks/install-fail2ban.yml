@@ -1,11 +1,8 @@
 ---
   - name: Install Fail2Ban packages
     package:
-      name: "{{ item }}"
+      name: "{{ fail2ban }}"
       state: present
-    loop:
-    - fail2ban-server
-    - fail2ban-firewalld
 
   - name: Copy jail.conf before altering it
     copy:
@@ -21,8 +18,12 @@
       option: "{{ item.option }}"
       value: "{{ item.value }}"
     loop:
-    - { section: DEFAULT, option: bantime, value: 1w }
-    - { section: sshd,    option: enabled, value: "true" }
+    - section: DEFAULT
+      option: bantime
+      value: 1w
+    - section: sshd
+      option: enabled
+      value: "true"
 
   - name: Enable Fail2Ban Services
     systemd:

@@ -5,6 +5,7 @@
 - import_tasks: librenms-composer.yml
 - import_tasks: librenms-pip.yml
 - import_tasks: librenms-php.yml
+- import_tasks: librenms-timezone.yml
 - import_tasks: librenms-snmp.yml
 - import_tasks: librenms-nginx.yml
 - import_tasks: librenms-selinux.yml

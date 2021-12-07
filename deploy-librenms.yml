@@ -26,3 +26,4 @@
         snmp_gps: 0,0
         snmp_contact: Joe Blogs
         snmp_email: joe@blogs.com
+    - mariadb

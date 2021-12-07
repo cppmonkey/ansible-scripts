@@ -18,9 +18,7 @@
 
   - name: Install PHP Packages
     ansible.builtin.package:
-      name: "{{ item }}"
-      state: latest
-    with_items:
+      name:
       - php-fpm
       - php-cli
       - php-common
@@ -34,4 +32,5 @@
       - php-memcached
       - php-mysqlnd
       - python-memcached
+      state: present
     notify: restart php-fpm
