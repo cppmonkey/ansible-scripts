@@ -1,3 +1,4 @@
 ---
 - import_tasks: vs-code.yml
 - import_tasks: python.yml
+- import_tasks: ansible.yml
