@@ -4,17 +4,17 @@
   - name: LibreNMS - MySQL/MariaDB SNMP Extend Script
     block:
     - name: Get Required Packages - MySQL/MariaDB SNMP Extend Script
-      package:
+      ansible.builtin.package:
         name: [ php-cli, php-mysql ]
         state: present
     - name: Get LibreNMS - MySQL/MariaDB Extend Script
-      get_url:
+      ansible.builtin.get_url:
         url: https://github.com/librenms/librenms-agent/raw/master/snmp/mysql
         dest: /etc/snmp/mysql
         mode: +x
         force: yes
     - name: Add LibreNMS - Create MySQL/MariaDB cache folder
-      file:
+      ansible.builtin.file:
         path: /var/cache/librenms/
         state: directory
         mode: '755'
@@ -22,7 +22,7 @@
         group: "{{ snmpd_group }}"
 
     - name: Add LibreNMS - MySQL/MariaDB SNMP Extend Script to snmpd.conf
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/snmp/snmpd.conf
         regexp: '^extend mysql'
         line: extend mysql /etc/snmp/mysql

@@ -1,21 +1,18 @@
 ---
   - name: Install Fail2Ban packages
-    package:
-      name: "{{ item }}"
+    ansible.builtin.package:
+      name: "{{ fail2ban }}"
       state: present
-    loop:
-    - fail2ban-server
-    - fail2ban-firewalld
 
   - name: Copy jail.conf before altering it
-    copy:
+    ansible.builtin.copy:
       dest: /etc/fail2ban/jail.d/local.conf
       src: /etc/fail2ban/jail.conf
       remote_src: yes
       force: no
 
   - name: Configure Fail2Ban
-    ini_file:
+    community.general.ini_file:
       path: /etc/fail2ban/jail.d/local.conf
       section: "{{ item.section }}"
       option: "{{ item.option }}"
@@ -25,7 +22,7 @@
     - { section: sshd,    option: enabled, value: "true" }
 
   - name: Enable Fail2Ban Services
-    systemd:
+    ansible.builtin.systemd:
       daemon_reload: yes
       name: fail2ban
       enabled: yes

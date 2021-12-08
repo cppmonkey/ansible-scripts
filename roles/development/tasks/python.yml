@@ -1,6 +1,6 @@
 ---
   - name: Install Python Packages
-    package:
+    ansible.builtin.package:
       name:
       - python3-netmiko
       - python3-black
