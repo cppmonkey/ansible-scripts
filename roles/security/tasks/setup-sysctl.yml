@@ -6,21 +6,43 @@
       state: "{{ item.state }}"
     loop:
     # Spoof protection
-    - { name: net.ipv4.conf.default.rp_filter, value: 1, state: present }
-    - { name: net.ipv4.conf.all.rp_filter, value: 1, state: present }
+    - name: net.ipv4.conf.default.rp_filter
+      value: 1
+      state: present
+    - name: net.ipv4.conf.all.rp_filter
+      value: 1
+      state: present
     # block ICMP redirects (prevent MITM attacks)
-    - { name: net.ipv4.conf.all.accept_redirects, value: 0, state: present }
-    - { name: net.ipv6.conf.all.accept_redirects, value: 0, state: present }
+    - name: net.ipv4.conf.all.accept_redirects
+      value: 0
+      state: present
+    - name: net.ipv6.conf.all.accept_redirects
+      value: 0
+      state: present
     # We are not a router
-    - { name: net.ipv4.ip_forward, value: 0, state: present }
-    - { name: net.ipv4.conf.all.send_redirects, value: 0, state: present }
-    - { name: net.ipv4.conf.all.accept_source_route, value: 0, state: present }
-    - { name: net.ipv6.conf.all.accept_source_route, value: 0, state: present }
+    - name: net.ipv4.ip_forward
+      value: 0
+      state: present
+    - name: net.ipv4.conf.all.send_redirects
+      value: 0
+      state: present
+    - name: net.ipv4.conf.all.accept_source_route
+      value: 0
+      state: present
+    - name: net.ipv6.conf.all.accept_source_route
+      value: 0
+      state: present
     # Logs martians
-    - { name: net.ipv4.conf.all.log_martians, value: 1, state: present }
+    - name: net.ipv4.conf.all.log_martians
+      value: 1
+      state: present
 
-    - { name: net.ipv4.icmp_ignore_bogus_error_responses, value: 1, state: present }
+    - name: net.ipv4.icmp_ignore_bogus_error_responses
+      value: 1
+      state: present
 
-    - { name: net.ipv4.conf.all.arp_notify, value: 1, state: present }
+    - name: net.ipv4.conf.all.arp_notify
+      value: 1
+      state: present
 
 
