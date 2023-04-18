@@ -2,26 +2,32 @@
   - name: Get service facts
     ansible.builtin.service_facts:
 
+  - name: Print service facts
+    ansible.builtin.debug:
+      var: ansible_facts.services
+
   - name: Allow VPN through Firewalld
     block:
     - name: Allow VPN IPv4
-      ansible.builtin.firewalld:
+      ansible.posix.firewalld:
         rich_rule: rule family=ipv4 protocol value=gre accept
         permanent: yes
         immediate: yes
         state: enabled
 
     - name: Allow VPN IPv6
-      ansible.builtin.firewalld:
+      ansible.posix.firewalld:
         rich_rule: rule family=ipv6 protocol value=gre accept
         permanent: yes
         immediate: yes
         state: enabled
 
     - name: Allow Mansquerade
-      ansible.builtin.firewalld:
+      ansible.posix.firewalld:
         masquerade: yes
         permanent: yes
         immediate: yes
         state: enabled
-    when: ansible_facts.services["firewalld.service"]["state"] == "running"
+    when:
+      - ansible_facts.services["firewalld.service"] is defined
+      - ansible_facts.services["firewalld.service"]["state"] == "running"

@@ -4,7 +4,9 @@
   become: true
 
   roles:
+    - common
     - development
     - workstation
     - security
     - monitoring
+    - vpn

@@ -1,5 +1,9 @@
 ---
-- import_tasks: librenms/snmpd-defaults.yml
+- name: Gather the package facts
+  ansible.builtin.package_facts:
+    manager: auto
+  when: ansible_facts.packages is not defined
+
 - import_tasks: librenms/apache-stats.yml
 - import_tasks: librenms/bind-stats.yml
 - import_tasks: librenms/mdadm.yml
@@ -8,3 +12,4 @@
 - import_tasks: librenms/ntp-server.yml
 - import_tasks: librenms/os-update.yml
 - import_tasks: librenms/php-fpm.yml
+- import_tasks: librenms/snmpd-defaults.yml

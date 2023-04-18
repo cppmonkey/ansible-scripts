@@ -8,4 +8,5 @@
       regexp: '^extend nfs-server'
       line: extend nfs-server /bin/cat /proc/net/rpc/nfsd
     notify: restart snmpd
-    when: packages['nfs-server'] is defined
+    when: ansible_facts.packages['nfs-server'] is defined
+

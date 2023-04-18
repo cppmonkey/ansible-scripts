@@ -1,0 +1,7 @@
+---
+  - name: Install Ansible packages
+    ansible.builtin.pip:
+      name:
+        - ansible
+        - ansible-lint
+      state: latest

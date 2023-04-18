@@ -19,5 +19,6 @@
 
   - name: Install Visual Studio Code
     ansible.builtin.package:
-      name: 'code'
+      name: code
       state: present
+

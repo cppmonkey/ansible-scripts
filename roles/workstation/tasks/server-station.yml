@@ -5,6 +5,7 @@
       state: present
       special_time: reboot
       job: "echo high > /sys/class/drm/card0/device/power_dpm_force_performance_level"
+    when: False
 
   - name: Fix Radeon GPU1 Flicker
     ansible.builtin.cron:
@@ -12,3 +13,4 @@
       state: present
       special_time: reboot
       job: "echo high > /sys/class/drm/card1/device/power_dpm_force_performance_level"
+    when: False

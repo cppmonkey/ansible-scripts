@@ -11,12 +11,11 @@
         force: yes
 
     - name: Install LibreNMS - Apache SNMP Extend Script requires packages
-      ansible.builtin.package:
-        name: "{{ item }}"
+      ansible.builtin.pip:
+        name:
+          - urlgrabber
+          - pycurl
         state: present
-      with_items:
-      - python-urlgrabber
-      - python-pycurl
 
     # make sure that it is owned by the user running the SNMP daemon.
     # mkdir -p /var/cache/librenms/

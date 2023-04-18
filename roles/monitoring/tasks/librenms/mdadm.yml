@@ -21,7 +21,7 @@
     - packages['mdadm'] is defined
 
 #  - name: LibreNMS - MDADM SNMP Extend Script Cleanup snmpd.conf
-#    lineinfile:
+#    ansible.builtin.lineinfile:
 #      path: /etc/snmp/snmpd.conf
 #      regexp: '^extend mdadm'
 #      state: absent

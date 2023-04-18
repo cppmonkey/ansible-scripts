@@ -1,0 +1,15 @@
+---
+- name: Install base requirements
+  ansible.builtin.package:
+    name: gnupg2 #required to add keys!
+    state: present
+
+- name: Install base requirements
+  ansible.builtin.package:
+    name:
+    - git
+    - vim
+    - wget
+    - python3
+    state: present
+
