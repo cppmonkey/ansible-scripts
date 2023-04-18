@@ -1,0 +1,6 @@
+---
+  - name: Add host keys
+    ansible.builtin.known_hosts:
+      name: "{{ item }}"
+      key: "{{ lookup('pipe', 'ssh-keyscan -t rsa {{ item }}') }}"
+    with_items: "{{ groups['servers:production'] }}"
