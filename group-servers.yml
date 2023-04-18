@@ -1,0 +1,7 @@
+---
+- name: Group the servers
+  hosts: servers
+  tasks:
+    - name: Classify hosts depending on their OS distribution
+      group_by:
+        key: "{{ ansible_facts['distribution'] | lower }}"

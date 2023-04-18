@@ -1,0 +1,18 @@
+---
+  - name: Add APT Key and Repo for Debian derived OS
+    block:
+    - name: Add Pritunl Apt Key
+      ansible.builtin.apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+
+    - name: Add Pritunl Apt Repo
+      ansible.builtin.apt_repository:
+        repo: "deb https://repo.pritunl.com/stable/apt {{ ansible_distribution_release }} main"
+        filename: pritunl
+        state: present
+    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+  - name: Install Pritunl
+    ansible.builtin.package:
+      name: pritunl-client

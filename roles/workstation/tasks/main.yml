@@ -1,3 +1,4 @@
 ---
 - import_tasks: firewalld-vpn.yml
 - import_tasks: server-station.yml
+- import_tasks: host-keys.yml

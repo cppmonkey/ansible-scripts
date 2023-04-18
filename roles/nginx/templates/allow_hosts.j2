@@ -1,0 +1,6 @@
+{% for ip_block in ip_blocks %}
+    # {{ ip_block.name }}
+    allow {{ ip_block.address }};
+{% endfor %}
+    deny all;
+

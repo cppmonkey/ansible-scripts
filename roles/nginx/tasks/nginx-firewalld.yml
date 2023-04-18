@@ -1,0 +1,24 @@
+---
+  - name: install required python modules for firewalls
+    ansible.builtin.package:
+      name: python-firewall
+      state: present
+
+  - name: Allow http through firewalld
+    ansible.posix.firewalld:
+      service: http
+      permanent: yes
+      state: enabled
+
+  - name: Allow http through firewalld
+    ansible.posix.firewalld:
+      service: http
+      permanent: yes
+      state: enabled
+
+  - name: Allow http through firewalld
+    ansible.posix.firewalld:
+      zone: public
+      service: http
+      permanent: yes
+      state: enabled

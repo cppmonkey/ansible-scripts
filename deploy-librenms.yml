@@ -1,0 +1,29 @@
+---
+- import_playbook: group-servers.yml
+
+- name: apply rolls for LibreNMS Servers
+  hosts: all
+  become: true
+  ignore_errors: yes
+
+## Commented out, as only used for initial installation.
+#  gather_facts: no
+#  pre_tasks:
+#  - name: install python
+#    raw: apt install python3 sudo -y
+
+  roles:
+    #- server
+    - nginx
+    - php
+    - librenms
+    - role: monitoring
+      vars:
+        snmp_package: net-snmp, net-snmp-utils
+        snmp_network: 127.0.0.1
+        snmp_community: public
+        snmp_location: On the Moon!
+        snmp_gps: 0,0
+        snmp_contact: Joe Blogs
+        snmp_email: joe@blogs.com
+    - mariadb

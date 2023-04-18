@@ -1,0 +1,60 @@
+---
+##  - name: Setup SE Linux
+  - name: Install required Python modules
+    ansible.builtin.package:
+      name: policycoreutils-python
+      state: present
+
+  - name: Setup SELinux fcontext
+    community.general.sefcontext:
+      target: '/opt/librenms/html(/.*)?'
+      setype: httpd_sys_content_t
+      state: present
+
+  - name: Setup SELinux fcontext
+    community.general.sefcontext:
+      target: '/opt/librenms/(logs|rrd|storage)(/.*)?'
+      setype: httpd_sys_rw_content_t
+      state: present
+
+  - name: Apply new SELinux file context to filesystem
+    ansible.builtin.command: restorecon -RFvv /opt/librenms
+
+  - name: Allow httpd to sendmail
+    ansible.posix.seboolean:
+      name: httpd_can_sendmail
+      state: yes
+      persistent: yes
+
+  - name: Allow httpd to execmem
+    ansible.posix.seboolean:
+      name: httpd_execmem
+      state: yes
+      persistent: yes
+
+#  - name: Set SELinxu context for .env
+#    file:
+#      path: /opt/librenms/.env
+#      setype: httpd_sys_rw_content_t
+
+  - name: fping - Copy selinux template
+    ansible.builtin.template:
+      dest: /tmp/http_fping.tt
+      src: http_fping.tt.j2
+
+  - name: fping - Checkmodule
+    ansible.builtin.command:
+      cmd: checkmodule -M -m -o http_fping.mod http_fping.tt
+      chdir: /tmp/
+      creates: http_fping.mod
+
+  - name: fping - Checkmodule
+    ansible.builtin.command:
+      cmd: semodule_package -o http_fping.pp -m http_fping.mod
+      chdir: /tmp/
+      creates: http_fping.pp
+
+  - name: fping - install SELinux module
+    ansible.builtin.command:
+      cmd: semodule -i http_fping.pp
+      chdir: /tmp/

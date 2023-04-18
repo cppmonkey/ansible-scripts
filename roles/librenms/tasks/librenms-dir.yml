@@ -1,0 +1,62 @@
+---
+  - name: install git
+    ansible.builtin.package:
+      name: git
+      state: present
+
+  - name: install GitHub to known_hosts file
+    ansible.builtin.known_hosts:
+      path: /etc/ssh/ssh_known_hosts
+      name: github.com
+      key: "{{ lookup('pipe', 'ssh-keyscan -t rsa github.com') }}"
+
+  - name: Check if /opt/librenms already exists
+    ansible.builtin.stat:
+      path: /opt/librenms
+    register: librenms_exists
+
+  - name: Clone librenms into /opt
+    ansible.builtin.git:
+      dest: /opt/librenms
+      repo: https://github.com/librenms/librenms.git
+    when: not librenms_exists.stat.exists
+
+  - name: Make librenms the owner (recursive)
+    ansible.builtin.file:
+      path: /opt/librenms
+      owner: librenms
+      group: librenms
+      recurse: yes
+
+  - name: change permissions to 771
+    ansible.builtin.file:
+      path: /opt/librenms
+      mode: '0771'
+
+  - name: Setup ACL for /opt/librenms
+    # setfacl -d -m g::rwx /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/
+    ansible.posix.acl:
+      state: present
+      default: yes
+      etype: group
+      permissions: rwx
+      path: "{{ item }}"
+    with_items:
+      - /opt/librenms/rrd/
+      - /opt/librenms/logs/
+      - /opt/librenms/bootstrap/cache/
+      - /opt/librenms/storage/
+
+  - name: Setup ACL for /opt/librenms (recursive)
+    # setfacl -R -m g::rwx /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/
+    ansible.posix.acl:
+      state: present # Has to be set before recursive... okay then!
+      recursive: yes
+      etype: group
+      permissions: rwx
+      path: "{{ item }}"
+    with_items:
+      - /opt/librenms/rrd/
+      - /opt/librenms/logs/
+      - /opt/librenms/bootstrap/cache/
+      - /opt/librenms/storage/

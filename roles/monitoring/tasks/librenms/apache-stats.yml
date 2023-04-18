@@ -4,32 +4,32 @@
   - name: LibreNMS - Apache SNMP Extend Script
     block:
     - name: Get LibreNMS - Apache SNMP Extend Script
-      get_url:
+      ansible.builtin.get_url:
         url: https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/apache-stats.py
         dest: /etc/snmp/apache-stats.py
         mode: +x
         force: yes
 
     - name: Install LibreNMS - Apache SNMP Extend Script requires packages
-      package:
-        name: "{{ item }}"
+      ansible.builtin.pip:
+        name:
+          - urlgrabber
+          - pycurl
         state: present
-      with_items:
-      - python-urlgrabber
-      - python-pycurl
 
     # make sure that it is owned by the user running the SNMP daemon.
     # mkdir -p /var/cache/librenms/
     - name: Make LibreNMS cache folder
-      file:
+      ansible.builtin.file:
         path: /var/cache/librenms/
         state: directory
         owner: "{{ snmpd_user }}"
         group: "{{ snmpd_group }}"
 
     - name: Add LibreNMS - Apache SNMP Extend script to snmpd.conf
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/snmp/snmpd.conf
         regexp: '^extend apache'
         line: extend apache /etc/snmp/apache-stats.py
-    when: "'apache2' in ansible_facts.packages"
+      notify: restart snmpd
+    when: packages['apache2'] is defined

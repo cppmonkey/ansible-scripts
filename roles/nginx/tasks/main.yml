@@ -1,0 +1,4 @@
+---
+- import_tasks: nginx-repos.yml
+- import_tasks: nginx-install.yml
+- import_tasks: nginx-firewalld.yml

@@ -1,0 +1,17 @@
+---
+  - name: Deploy LibreNMS user
+    ansible.builtin.user:
+      # useradd librenms -d /opt/librenms -M -r -s /usr/bin/bash
+      name: librenms
+      home: /opt/librenms
+      append: yes
+      groups: nginx # CentOS 7 only?
+      create_home: no
+      system: yes
+      shell: /usr/bin/bash
+
+  - name: Add LibreNMS to nnginx group
+    ansible.builtin.user:
+      name: librenms
+      append: yes
+      groups: nginx

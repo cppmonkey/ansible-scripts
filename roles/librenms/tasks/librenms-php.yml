@@ -1,0 +1,74 @@
+---
+  - name: PHP - Set timezone
+    community.general.ini_file:
+      path: /etc/php.ini # TODO make this an external variable
+      section: Date
+      option: date.timezone
+      value: "{{ librenms_timezone }}"
+      create: no
+
+  - name: Create LibreNMS php-fpm config
+    community.general.ini_file:
+      path: /etc/php-fpm.d/librenms.conf
+      section: "{{ item.section }}"
+      option: "{{ item.option }}"
+      value: "{{ item.value }}"
+    with_items:
+      - section: librenms
+        option: user
+        value: librenms
+      - section: librenms
+        option: group
+        value: librenms
+      - section: librenms
+        option: listen
+        value: /run/php-fpm/librenms.sock
+      - section: librenms
+        option: listen.owner
+        value: nginx
+      - section: librenms
+        option: listen.group
+        value: nginx
+      - section: librenms
+        option: listen.mode
+        value: '0660'
+      - section: librenms
+        option: pm
+        value: dynamic
+      - section: librenms
+        option: pm.max_children
+        value: 50
+      - section: librenms
+        option: pm.start_servers
+        value: 5
+      - section: librenms
+        option: pm.min_spare_servers
+        value: 5
+      - section: librenms
+        option: pm.max_spare_servers
+        value: 35
+      - section: librenms
+        option: slowlog
+        value: /var/log/php-fpm/librenms-slow.log
+      - section: librenms
+        option: "php_admin_value[error_log]"
+        value: /var/log/php-fpm/librenms-error.log
+      - section: librenms
+        option: "php_admin_flag[log_errors]"
+        value: "on"
+      - section: librenms
+        option: "php_value[session.save_handler]"
+        value: files
+      - section: librenms
+        option: "php_value[session.save_path]"
+        value: /var/lib/php/session
+      - section: librenms
+        option: "php_value[soap.wsdl_cache_dir]"
+        value: /var/lib/php/wsdlcache
+    notify: restart php-fpm
+
+  - name: assign /var/lib/php/session group to apache
+    ansible.builtin.file:
+      path: /var/lib/php/session
+      group: apache
+      state: directory
