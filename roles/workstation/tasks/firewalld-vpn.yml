@@ -1,21 +1,27 @@
 ---
-  - name: Allow VPN IPv4
-    firewalld:
-      rich_rule: rule family=ipv4 protocol value=gre accept
-      permanent: yes
-      immediate: yes
-      state: enabled
+  - name: Get service facts
+    ansible.builtin.service_facts:
 
-  - name: Allow VPN IPv6
-    firewalld:
-      rich_rule: rule family=ipv6 protocol value=gre accept
-      permanent: yes
-      immediate: yes
-      state: enabled
+  - name: Allow VPN through Firewalld
+    block:
+    - name: Allow VPN IPv4
+      ansible.builtin.firewalld:
+        rich_rule: rule family=ipv4 protocol value=gre accept
+        permanent: yes
+        immediate: yes
+        state: enabled
 
-  - name: Allow Mansquerade
-    firewalld:
-      masquerade: yes
-      permanent: yes
-      immediate: yes
-      state: enabled
+    - name: Allow VPN IPv6
+      ansible.builtin.firewalld:
+        rich_rule: rule family=ipv6 protocol value=gre accept
+        permanent: yes
+        immediate: yes
+        state: enabled
+
+    - name: Allow Mansquerade
+      ansible.builtin.firewalld:
+        masquerade: yes
+        permanent: yes
+        immediate: yes
+        state: enabled
+    when: ansible_facts.services["firewalld.service"]["state"] == "running"
