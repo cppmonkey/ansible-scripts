@@ -1,14 +1,14 @@
 ---
   - name: Install SNMPD
-    package:
+    ansible.builtin.package:
       name: "{{ snmp_package }}"
 
   - name: Get LibreNMS - SNMP Extend Script
-    shell: cat /etc/snmp/snmpd.conf
+    ansible.builtin.shell: cat /etc/snmp/snmpd.conf
     register: snmpd_conf
 
   - name: Get LibreNMS - snmpd script
-    template:
+    ansible.builtin.template:
       src: snmpd.j2
       dest: /etc/snmp/snmpd.conf
       force: yes
@@ -16,7 +16,7 @@
     notify: restart snmpd
 
   - name: Get LibreNMS - distro SNMP Extend Script
-    get_url:
+    ansible.builtin.get_url:
       url: https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/distro
       dest: /usr/bin/distro
       mode: +x

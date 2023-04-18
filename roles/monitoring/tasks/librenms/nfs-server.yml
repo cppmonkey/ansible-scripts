@@ -3,7 +3,7 @@
 # just add the following line to /etc/snmp/snmpd.conf, note : find out where cat is located using : which cat
 # extend nfs-server /bin/cat /proc/net/rpc/nfsd
   - name: Add LibreNMS - NFS-Server SNMP Extend Script to snmpd.conf
-    lineinfile:
+    ansible.builtin.lineinfile:
       path: /etc/snmp/snmpd.conf
       regexp: '^extend nfs-server'
       line: extend nfs-server /bin/cat /proc/net/rpc/nfsd

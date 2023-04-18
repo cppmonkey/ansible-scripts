@@ -1,16 +1,16 @@
 ---
   - name: install nginx
-    package:
+    ansible.builtin.package:
       name: nginx
       state: present
 
   - name: disable default website
-    template:
+    ansible.builtin.template:
       dest: /etc/nginx/nginx.conf
       src: nginx.conf.j2
       setype: httpd_config_t
 
   - name: enable nginx service
-    systemd:
+    ansible.builtin.systemd:
       name: nginx
       enabled: yes

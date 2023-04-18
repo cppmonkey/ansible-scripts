@@ -1,6 +1,6 @@
 ---
   - name: Add LibreNMS - APT Periodic Update for OS Update SNMP Extend Script
-    lineinfile:
+    ansible.builtin.ineinfile:
       path: /etc/apt/apt.conf.d/10periodic
       regexp: '^APT::Periodic'
       line: 'APT::Periodic::Update-Package-Lists "1";'
@@ -8,14 +8,14 @@
     when: ansible_os_family == 'Debian'
 
   - name: Get LibreNMS - OS Update SNMP Extend Script
-    get_url:
+    ansible.builtin.get_url:
       url: https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/osupdate
       dest: /etc/snmp/osupdate
       mode: +x
       force: yes
 
   - name: Add LibreNMS - Bind SNMP Extend script to snmpd.conf
-    lineinfile:
+    ansible.builtin.lineinfile:
       path: /etc/snmp/snmpd.conf
       regexp: '^extend osupdate'
       line: extend osupdate /etc/snmp/osupdate

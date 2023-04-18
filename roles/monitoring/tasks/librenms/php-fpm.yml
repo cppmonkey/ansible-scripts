@@ -4,18 +4,18 @@
   - name: LibreNMS - PHP-FPM Server SNMP Extend Script
     block:
     - name: Get Required Packages - PHP-FPM SNMP Extend Script
-      package:
+      ansible.builtin.package:
         name: curl
         state: present
     - name: Get LibreNMS - PHP-FPM SNMP Extend Script
-      get_url:
+      ansible.builtin.get_url:
         url: https://github.com/librenms/librenms-agent/raw/master/snmp/phpfpmsp
         dest: /etc/snmp/phpfpmsp
         mode: +x
         force: yes
 
     - name: Add LibreNMS - PHP-FPM SNMP Extend Script to snmpd.conf
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/snmp/snmpd.conf
         regexp: '^extend phpfpmsp'
         line: extend phpfpmsp /etc/snmp/phpfpmsp

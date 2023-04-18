@@ -1,6 +1,6 @@
 ---
   - name: Create LibreNMS CRON Job
-    copy:
+    ansible.builtin.copy:
       src: /opt/librenms/librenms.nonroot.cron
       dest: /etc/cron.d/librenms
       owner: root
@@ -9,7 +9,7 @@
       remote_src: yes
 
   - name: Create LibreNMS Logrotate CRON job
-    copy:
+    ansible.builtin.copy:
       src: /opt/librenms/misc/librenms.logrotate
       dest: /etc/logrotate.d/librenms
       owner: root

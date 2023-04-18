@@ -1,6 +1,6 @@
 ---
   - name: PHP - Set timezone
-    ini_file:
+    community.general.ini_file:
       path: /etc/php.ini # TODO make this an external variable
       section: Date
       option: date.timezone
@@ -8,7 +8,7 @@
       create: no
 
   - name: Create LibreNMS php-fpm config
-    ini_file:
+    community.general.ini_file:
       path: /etc/php-fpm.d/librenms.conf
       section: "{{ item.section }}"
       option: "{{ item.option }}"
@@ -68,7 +68,7 @@
     notify: restart php-fpm
 
   - name: assign /var/lib/php/session group to apache
-    file:
+    ansible.builtin.file:
       path: /var/lib/php/session
       group: apache
       state: directory

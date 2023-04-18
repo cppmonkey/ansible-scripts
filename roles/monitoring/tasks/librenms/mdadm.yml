@@ -4,14 +4,14 @@
   - name: LibreNMS - MDADM SNMP Extend Script
     block:
     - name: Get LibreNMS - MDADM SNMP Extend Script
-      get_url:
+      ansible.builtin.get_url:
         url: https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/mdadm
         dest: /etc/snmp/mdadm
         mode: +x
         force: yes
 
     - name: Add LibreNMS - MDADM SNMP Extend Script to snmpd.conf
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: /etc/snmp/snmpd.conf
         regexp: '^extend mdadm'
         line: extend mdadm /etc/snmp/mdadm

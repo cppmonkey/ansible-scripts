@@ -1,14 +1,14 @@
 ---
 # sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
   - name: Add VS Code GPG
-    rpm_key:
+    ansible.builtin.rpm_key:
       state: present
       key: https://packages.microsoft.com/keys/microsoft.asc
     when: ansible_os_family == 'RedHat'
 
 # sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
   - name: Add VS Code Repo (RHEL)
-    yum_repository:
+    ansible.builtin.yum_repository:
       name: vscode
       description: Visual Studio Code
       baseurl: https://packages.microsoft.com/yumrepos/vscode
@@ -18,6 +18,6 @@
     when: ansible_os_family == 'RedHat'
 
   - name: Install Visual Studio Code
-    package:
+    ansible.builtin.package:
       name: 'code'
       state: present

@@ -1,14 +1,14 @@
 ---
   - name: Fix Radeon GPU0 Flicker
-    cron:
-      name: AMDGPU
+    ansible.builtin.cron:
+      name: AMDGPU0
       state: present
       special_time: reboot
       job: "echo high > /sys/class/drm/card0/device/power_dpm_force_performance_level"
 
   - name: Fix Radeon GPU1 Flicker
-    cron:
-      name: AMDGPU
+    ansible.builtin.cron:
+      name: AMDGPU1
       state: present
       special_time: reboot
       job: "echo high > /sys/class/drm/card1/device/power_dpm_force_performance_level"
